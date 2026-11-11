@@ -15,16 +15,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 1. MIDDLEWARES (Must run BEFORE routes)
+// 1. MIDDLEWARES
 app.use(morgan('dev'));
 
 // Permissive CORS for local & production deployment
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow server-to-server, mobile, same-origin, or Vercel preview URLs
-    if (!origin || origin.includes('localhost') || origin.includes('.vercel.app') || origin === process.env.CLIENT_URL) {
-      return callback(null, true);
-    }
     return callback(null, true);
   },
   credentials: true,
@@ -59,7 +55,12 @@ app.use('/api/clearance', clearanceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ai', aiRoutes);
 
-// 4. START SERVER
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+// 4. START SERVER (Only listen when running directly, not in serverless import)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+}
+
+// Export default app for Vercel Serverless Function handling
+export default app;
