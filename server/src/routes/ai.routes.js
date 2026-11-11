@@ -1,10 +1,10 @@
 import express from 'express';
-import { protect } from '../middleware/auth.middleware.js';
 import { processChatMessage } from '../services/ai.service.js';
 
 const router = express.Router();
 
-router.post('/chat', protect, async (req, res) => {
+// Allow public access so students, applicants, and visitors can ask questions before and after login
+router.post('/chat', async (req, res) => {
   try {
     const { message } = req.body;
     if (!message || typeof message !== 'string') {

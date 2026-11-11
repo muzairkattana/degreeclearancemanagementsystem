@@ -5,6 +5,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAdminGuide, setShowAdminGuide] = useState(true);
 
   useEffect(() => {
     fetchAdminData();
@@ -105,6 +106,54 @@ export default function AdminDashboard() {
         </div>
       </div>
 
+      {/* INSTITUTIONAL ADMIN & CONTROLLER AUDIT GUIDE */}
+      <div className="bg-white rounded-xl shadow-xs border border-purple-200 p-5">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-purple-700">admin_panel_settings</span>
+            <h3 className="font-bold text-slate-900 text-sm">Controller & Administrator Operations Guide</h3>
+          </div>
+          <button
+            onClick={() => setShowAdminGuide(!showAdminGuide)}
+            className="text-xs text-purple-600 hover:underline font-medium cursor-pointer"
+          >
+            {showAdminGuide ? 'Collapse Guide' : 'Expand Guide'}
+          </button>
+        </div>
+
+        {showAdminGuide && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-blue-600 text-base">monitoring</span>
+                <p className="font-bold text-slate-800">Clearance Pipeline Monitoring</p>
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                Track all university student clearance workflows in real time. Observe departmental bottlenecks and track pending departmental approvals.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-lg bg-emerald-50/70 border border-emerald-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-emerald-700 text-base">verified_user</span>
+                <p className="font-bold text-emerald-900">Certificate Verification & Printing</p>
+              </div>
+              <p className="text-emerald-800 leading-relaxed">
+                When an application reaches 8/8 approvals, the Examination Branch can generate, audit, and print the official degree clearance certificate with verification ID.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-lg bg-purple-50/70 border border-purple-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-purple-700 text-base">manage_accounts</span>
+                <p className="font-bold text-purple-900">Eligibility & Registrations</p>
+              </div>
+              <p className="text-purple-800 leading-relaxed">
+                Review graduation lists and batch-import eligible graduates via registrar CSV records to maintain strict security over degree clearance applications.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Applications Table */}
       <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
@@ -135,7 +184,6 @@ export default function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {requests.map((r) => {
-                  // Progress is provided directly from the API endpoint formattedData
                   const completed = r.progress ? r.progress.completed : (r.status === 'completed' ? 8 : 0);
                   const total = r.progress ? r.progress.total : 8;
                   const percentage = r.progress ? r.progress.percentage : (r.status === 'completed' ? 100 : 0);

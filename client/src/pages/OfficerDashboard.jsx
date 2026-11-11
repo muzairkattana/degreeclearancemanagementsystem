@@ -10,6 +10,7 @@ export default function OfficerDashboard() {
   const [selectedReview, setSelectedReview] = useState(null);
   const [remarks, setRemarks] = useState('');
   const [msg, setMsg] = useState({ text: '', type: '' });
+  const [showStaffGuide, setShowStaffGuide] = useState(true);
 
   useEffect(() => {
     fetchQueue();
@@ -37,11 +38,11 @@ export default function OfficerDashboard() {
     try {
       const res = await api.put(`/clearance/officer/review/${selectedReview.review_id}`, {
         status, // 'approved' or 'rejected'
-        remarks: remarks || (status === 'approved' ? 'All dues cleared, approved.' : 'Dues pending.'),
+        remarks: remarks || (status === 'approved' ? 'All departmental criteria verified and cleared.' : 'Pending liabilities or items outstanding.'),
       });
 
       if (res.data?.success) {
-        setMsg({ text: `Application ${status} successfully!`, type: 'success' });
+        setMsg({ text: `Application #${selectedReview.clearance_id} ${status} successfully!`, type: 'success' });
         setSelectedReview(null);
         setRemarks('');
         fetchQueue();
@@ -69,6 +70,54 @@ export default function OfficerDashboard() {
           <span className="material-symbols-outlined text-[16px]">refresh</span>
           <span>Refresh Queue</span>
         </button>
+      </div>
+
+      {/* DEPARTMENT STAFF / OFFICER OPERATIONAL GUIDE */}
+      <div className="bg-white rounded-xl shadow-xs border border-indigo-200 p-5">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-indigo-700">menu_book</span>
+            <h3 className="font-bold text-slate-900 text-sm">Department Officer Protocol & Verification Guide</h3>
+          </div>
+          <button
+            onClick={() => setShowStaffGuide(!showStaffGuide)}
+            className="text-xs text-indigo-600 hover:underline font-medium cursor-pointer"
+          >
+            {showStaffGuide ? 'Collapse Guide' : 'Expand Guide'}
+          </button>
+        </div>
+
+        {showStaffGuide && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-blue-600 text-base">fact_check</span>
+                <p className="font-bold text-slate-800">1. Inspect Record</p>
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                Check the student's registration number against your departmental ledger (e.g. Accounts fee challan, Library book register, Hostel inventory).
+              </p>
+            </div>
+            <div className="p-3.5 rounded-lg bg-emerald-50/70 border border-emerald-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-emerald-700 text-base">check_circle</span>
+                <p className="font-bold text-emerald-900">2. Granting Approval</p>
+              </div>
+              <p className="text-emerald-800 leading-relaxed">
+                If all dues and items are cleared, click <b>Approve Clearance</b>. An official sign-off audit log with your name and timestamp is recorded.
+              </p>
+            </div>
+            <div className="p-3.5 rounded-lg bg-rose-50/70 border border-rose-200">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="material-symbols-outlined text-rose-700 text-base">report_problem</span>
+                <p className="font-bold text-rose-900">3. Reject with Remarks</p>
+              </div>
+              <p className="text-rose-800 leading-relaxed">
+                If the student owes dues or equipment, click <b>Reject / Disapprove</b> and provide detailed remarks so the student knows what to clear.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {msg.text && (
@@ -138,9 +187,11 @@ export default function OfficerDashboard() {
       {/* Review Modal Dialog */}
       {selectedReview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-lg font-bold text-slate-900">Review Clearance Request #{selectedReview.clearance_id}</h3>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">
+                Review Clearance #{selectedReview.clearance_id}
+              </h3>
               <button
                 onClick={() => setSelectedReview(null)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -149,30 +200,31 @@ export default function OfficerDashboard() {
               </button>
             </div>
 
-            <div className="bg-slate-50 p-3 rounded-lg text-xs space-y-1">
-              <p><strong className="text-slate-700">Student:</strong> {selectedReview.clearanceRequest?.student?.full_name}</p>
-              <p><strong className="text-slate-700">Registration No:</strong> {selectedReview.clearanceRequest?.student?.registration_no}</p>
-              <p><strong className="text-slate-700">Department Being Cleared:</strong> {user?.department?.name}</p>
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-1.5">
+              <p><span className="font-semibold text-slate-700">Student Name:</span> {selectedReview.clearanceRequest?.student?.full_name}</p>
+              <p><span className="font-semibold text-slate-700">Registration No:</span> {selectedReview.clearanceRequest?.student?.registration_no}</p>
+              <p><span className="font-semibold text-slate-700">Email:</span> {selectedReview.clearanceRequest?.student?.email}</p>
+              <p><span className="font-semibold text-slate-700">Department:</span> {user?.department?.name}</p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase text-slate-700 mb-1">
-                Official Remarks / Clearance Notes
+              <label className="block text-xs font-semibold uppercase text-slate-700 mb-1">
+                Official Remarks / Reason
               </label>
               <textarea
                 rows={3}
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
-                placeholder="e.g. Books returned, laboratory equipment verified, no outstanding liability."
-                className="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-600 outline-none"
-              />
+                placeholder="Enter verification notes (e.g. All library books returned, or PKR 2000 hostel mess dues outstanding)..."
+                className="w-full border border-slate-300 rounded-lg p-3 text-xs sm:text-sm focus:ring-2 focus:ring-[#00173b] outline-none"
+              ></textarea>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+            <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setSelectedReview(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800"
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-800"
               >
                 Cancel
               </button>
@@ -180,17 +232,17 @@ export default function OfficerDashboard() {
                 type="button"
                 disabled={actionLoading}
                 onClick={() => handleAction('rejected')}
-                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer disabled:opacity-50"
               >
-                Reject (Outstanding Dues)
+                Reject / Disapprove
               </button>
               <button
                 type="button"
                 disabled={actionLoading}
                 onClick={() => handleAction('approved')}
-                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition cursor-pointer disabled:opacity-50"
               >
-                Approve & Clear
+                {actionLoading ? 'Saving...' : 'Approve Clearance'}
               </button>
             </div>
           </div>

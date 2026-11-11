@@ -8,6 +8,7 @@ export default function StudentDashboard() {
   const [clearance, setClearance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [showGuide, setShowGuide] = useState(true);
 
   useEffect(() => {
     fetchClearanceStatus();
@@ -33,7 +34,6 @@ export default function StudentDashboard() {
       const res = await api.get(`/clearance/${clearance.clearance_id}/download-pdf`, {
         responseType: 'blob',
       });
-      // Create download link
       const blob = new Blob([res.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -108,6 +108,55 @@ export default function StudentDashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* STUDENT STEP-BY-STEP USER GUIDE */}
+      <div className="bg-white rounded-xl shadow-xs border border-blue-200 p-5">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-blue-600">help_outline</span>
+            <h3 className="font-bold text-slate-900 text-sm">Student Quick Clearance Guide (How It Works)</h3>
+          </div>
+          <button
+            onClick={() => setShowGuide(!showGuide)}
+            className="text-xs text-blue-600 hover:underline font-medium cursor-pointer"
+          >
+            {showGuide ? 'Collapse Guide' : 'Expand Guide'}
+          </button>
+        </div>
+
+        {showGuide && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+            <div className="p-3 rounded-lg bg-blue-50/60 border border-blue-100 flex gap-2.5">
+              <span className="font-bold text-blue-700 bg-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 border border-blue-200 shadow-xs">1</span>
+              <div>
+                <p className="font-bold text-slate-800 mb-0.5">Apply Online</p>
+                <p className="text-slate-600">Click Apply Clearance, fill your CGPA, session & attach your CV and paid fee challan scan.</p>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-indigo-50/60 border border-indigo-100 flex gap-2.5">
+              <span className="font-bold text-indigo-700 bg-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 border border-indigo-200 shadow-xs">2</span>
+              <div>
+                <p className="font-bold text-slate-800 mb-0.5">Parallel Verification</p>
+                <p className="text-slate-600">Your application is sent simultaneously to 8 departments: Accounts, Library, Hostel, FYP, Store, Transport, Admission & CLO.</p>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-amber-50/60 border border-amber-100 flex gap-2.5">
+              <span className="font-bold text-amber-700 bg-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 border border-amber-200 shadow-xs">3</span>
+              <div>
+                <p className="font-bold text-slate-800 mb-0.5">Real-Time Tracking</p>
+                <p className="text-slate-600">Check this dashboard anytime to see which officers approved and view any feedback remarks.</p>
+              </div>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-50/60 border border-emerald-100 flex gap-2.5">
+              <span className="font-bold text-emerald-700 bg-white w-6 h-6 rounded-full flex items-center justify-center shrink-0 border border-emerald-200 shadow-xs">4</span>
+              <div>
+                <p className="font-bold text-slate-800 mb-0.5">Certificate Download</p>
+                <p className="text-slate-600">When all 8 departments approve, your official signed Clearance Certificate PDF is generated instantly.</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Completion Banner if Approved */}

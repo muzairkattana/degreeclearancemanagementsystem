@@ -1,6 +1,54 @@
 import React, { useState, useRef, useEffect } from 'react';
 import api from '../services/api';
 
+// Fallback local response generator when backend is temporarily unreachable
+const getFallbackLocalResponse = (query) => {
+  const q = query.toLowerCase();
+  if (q.includes('step') || q.includes('apply') || q.includes('how') || q.includes('procedure') || q.includes('clearance')) {
+    return `📋 UET Mardan Clearance Procedure:
+1. Submit your clearance application under "Apply Clearance".
+2. Parallel verification requests are sent to all 8 offices: Admission, Accounts, Library, Hostel, Store, Transport, FYP, and CLO.
+3. Track each department's status on your dashboard in real time.
+4. When all 8 departments approve, you can download your official verified Clearance Certificate PDF.`;
+  }
+  if (q.includes('fee') || q.includes('challan') || q.includes('account') || q.includes('pay') || q.includes('due')) {
+    return `💰 Accounts Office Requirements:
+- Clear all semester tuition, exam, and registration fees.
+- Deposit the degree processing fee at Bank of Khyber.
+- Upload your verified bank-stamped challan scan when applying.`;
+  }
+  if (q.includes('book') || q.includes('library') || q.includes('deposit')) {
+    return `📚 Central Library Requirements:
+- Return all issued textbooks, references, and project manuals.
+- Pay any overdue fines at the main library desk.
+- The Librarian will approve and authorize your library security deposit refund.`;
+  }
+  if (q.includes('hostel') || q.includes('room') || q.includes('mess') || q.includes('warden')) {
+    return `🏢 Hostel Office Requirements:
+- Hand over room keys and inventory to your respective Hostel Warden.
+- Clear pending mess and utility dues.
+- Day-scholar non-resident students are automatically marked clear by the Provost.`;
+  }
+  if (q.includes('fyp') || q.includes('project') || q.includes('thesis')) {
+    return `🎓 FYP Coordinator Requirements:
+- Submit hardbound final thesis book signed by supervisor & external examiner.
+- Provide source code repository and report CD/softcopy to the department coordinator.`;
+  }
+  if (q.includes('cert') || q.includes('download') || q.includes('pdf')) {
+    return `📄 Certificate Download:
+- Once all 8 departments verify your dues, a green "Download Official Certificate (PDF)" button appears on your dashboard.
+- The PDF contains official UET Mardan seals, issue IDs, and sign-offs for the Examination Branch.`;
+  }
+  return `🎓 UET Mardan AI Clearance Assistant:
+I can help guide you through:
+• Application steps & departmental verification
+• Accounts & tuition fee challan requirements
+• Library book returns & security clearance
+• Hostel room handover rules
+• FYP thesis approval & coordinator clearance
+• Downloading your official degree clearance certificate.`;
+};
+
 export default function AiAssistantWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -37,7 +85,7 @@ export default function AiAssistantWidget() {
 
     try {
       const res = await api.post('/ai/chat', { message: userText });
-      const aiReply = res.data?.data?.reply || 'I am processing your query. Please refer to university clearance policies.';
+      const aiReply = res.data?.data?.reply || getFallbackLocalResponse(userText);
       setMessages((prev) => [
         ...prev,
         {
@@ -47,11 +95,13 @@ export default function AiAssistantWidget() {
         },
       ]);
     } catch (err) {
+      // Robust client-side knowledge fallback so the chatbot never shows an error
+      const fallbackReply = getFallbackLocalResponse(userText);
       setMessages((prev) => [
         ...prev,
         {
           sender: 'ai',
-          text: 'Unable to reach AI knowledge assistant. Please check your internet connection.',
+          text: fallbackReply,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
