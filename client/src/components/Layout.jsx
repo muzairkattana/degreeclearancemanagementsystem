@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AiAssistantWidget from './AiAssistantWidget';
@@ -8,7 +8,6 @@ export default function Layout({ children }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getNavLinks = () => {
     if (!user) return [];
@@ -87,7 +86,7 @@ export default function Layout({ children }) {
         )}
       </header>
 
-      {/* Sub Navigation Bar - Horizontal Scroll on Mobile */}
+      {/* Sub Navigation Bar */}
       {user && navLinks.length > 0 && (
         <nav className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2 flex items-center gap-2 shadow-xs overflow-x-auto no-scrollbar sticky top-16 z-20">
           {navLinks.map((item) => {
@@ -110,17 +109,36 @@ export default function Layout({ children }) {
         </nav>
       )}
 
-      {/* Main Content Area - Responsive padding */}
+      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8">
         {children}
       </main>
 
-      {/* Floating AI Assistant with Mobile-Optimized Bottom Sheet */}
+      {/* Floating AI Assistant */}
       <AiAssistantWidget />
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 px-4 text-center text-[11px] sm:text-xs text-slate-500">
-        © {new Date().getFullYear()} University of Engineering and Technology (UET) Mardan.
+      {/* Footer with FYP Group Student Credits */}
+      <footer className="border-t border-slate-200 bg-white py-4 px-4 text-center space-y-1.5">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-xs text-slate-700">
+          <span className="font-bold text-[#00173b] flex items-center gap-1">
+            <span className="material-symbols-outlined text-amber-500 text-sm">groups</span>
+            <span>FYP Project Team:</span>
+          </span>
+          <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-100">
+            Awais
+          </span>
+          <span className="text-slate-300">•</span>
+          <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-100">
+            Huzaifa
+          </span>
+          <span className="text-slate-300">•</span>
+          <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-100">
+            Murtaza
+          </span>
+        </div>
+        <p className="text-[11px] text-slate-500">
+          Department of Computer Software Engineering — University of Engineering and Technology (UET) Mardan © {new Date().getFullYear()}
+        </p>
       </footer>
     </div>
   );

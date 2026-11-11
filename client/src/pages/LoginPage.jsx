@@ -37,22 +37,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900 via-slate-900 to-black">
+    <div className="min-h-screen bg-slate-900 flex flex-col justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900 via-slate-900 to-black">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 mb-4 shadow-xl">
-          <span className="material-symbols-outlined text-amber-400 text-4xl">school</span>
+        <div className="inline-flex p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 mb-3 shadow-xl">
+          <span className="material-symbols-outlined text-amber-400 text-3xl sm:text-4xl">school</span>
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           UET Mardan Portal
         </h2>
-        <p className="mt-2 text-sm text-slate-300">
+        <p className="mt-1 text-xs sm:text-sm text-slate-300">
           AI-Powered Degree Clearance & Issuance Management
         </p>
+
+        {/* FYP Creator Team Badge */}
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-slate-200 text-xs">
+          <span className="text-amber-400 font-bold">FYP By:</span>
+          <span className="font-semibold text-white">Awais</span>
+          <span className="text-slate-400">•</span>
+          <span className="font-semibold text-white">Huzaifa</span>
+          <span className="text-slate-400">•</span>
+          <span className="font-semibold text-white">Murtaza</span>
+        </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-2xl rounded-2xl sm:px-10 border border-slate-100">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="mt-6 sm:mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-6 sm:py-8 px-5 sm:px-10 shadow-2xl rounded-2xl border border-slate-100">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700 border border-red-200 flex items-center gap-2">
                 <span className="material-symbols-outlined text-red-500 text-lg">error</span>
@@ -95,7 +105,6 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   className="block w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                 />
-                {/* Password Visibility Toggle Button */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -129,7 +138,7 @@ export default function LoginPage() {
           </form>
 
           {/* Quick Demo Credentials */}
-          <div className="mt-6 pt-6 border-t border-slate-100">
+          <div className="mt-5 pt-5 border-t border-slate-100">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500 text-center mb-2">
               Quick Demo Accounts (1-Click Fill)
             </p>
