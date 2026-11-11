@@ -3,11 +3,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import clearanceRoutes from './routes/clearance.routes.js';
-import notificationRoutes from './routes/notification.routes.js';
 
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import clearanceRoutes from './routes/clearance.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 
 dotenv.config();
 
@@ -24,7 +24,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// 2. HEALTH CHECK
+// 2. HEALTH & ROOT CHECK
+app.get('/', (req, res) => {
+  res.send(`
+    <div style="font-family: sans-serif; text-align: center; padding: 50px;">
+      <h2 style="color: #00173b;">🚀 Degree Clearance Management API Server is Running!</h2>
+      <p style="color: #64748b;">This port (5000) is the backend API.</p>
+      <p style="margin-top: 20px;">
+        To view the interactive portal UI, open: 
+        <a href="http://localhost:5173" style="color: #2563eb; font-weight: bold; font-size: 18px;">http://localhost:5173</a>
+      </p>
+    </div>
+  `);
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -36,15 +49,10 @@ app.get('/api/health', (req, res) => {
 // 3. API ROUTES
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/clearance', clearanceRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 4. START SERVER
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
-// ... inside your app setup, after other app.use() calls:
-app.use('/api/clearance', clearanceRoutes);
-
-// ... existing middleware and route mounts ...
-app.use('/api/clearance', clearanceRoutes);
-app.use('/api/notifications', notificationRoutes);
