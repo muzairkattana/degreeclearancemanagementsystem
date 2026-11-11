@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AiAssistantWidget from './AiAssistantWidget';
+import NotificationBell from './NotificationBell';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -53,9 +54,12 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        {/* User Badge & Actions */}
+        {/* User Badge, Notification Bell & Actions */}
         {user ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Real-Time Notification Bell Component */}
+            <NotificationBell />
+
             <div className="hidden sm:flex flex-col text-right">
               <span className="text-sm font-semibold text-white">{user.full_name}</span>
               <span className="text-xs text-amber-300 capitalize font-medium">{user.role} {user.department?.name ? `(${user.department.name})` : ''}</span>
