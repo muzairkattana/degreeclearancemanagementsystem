@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -87,13 +88,24 @@ export default function LoginPage() {
                   <span className="material-symbols-outlined text-[18px]">lock</span>
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="block w-full pl-10 pr-3 py-2.5 border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
+                  className="block w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-lg text-slate-900 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 outline-none transition"
                 />
+                {/* Password Visibility Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {showPassword ? 'visibility_off' : 'visibility'}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -125,21 +137,21 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => fillQuick('awais@student.uetmardan.edu.pk', 'student123')}
-                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center"
+                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center cursor-pointer"
               >
                 🎓 Student
               </button>
               <button
                 type="button"
                 onClick={() => fillQuick('officer.adm@university.edu.pk', 'officer123')}
-                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center"
+                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center cursor-pointer"
               >
                 ⚖️ Officer
               </button>
               <button
                 type="button"
                 onClick={() => fillQuick('admin@university.edu.pk', 'admin123')}
-                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center"
+                className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-1.5 px-2 rounded border border-slate-200 transition text-center cursor-pointer"
               >
                 🛡️ Admin
               </button>
