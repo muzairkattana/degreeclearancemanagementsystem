@@ -7,6 +7,7 @@ export default function StudentDashboard() {
   const { user } = useAuth();
   const [clearance, setClearance] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     fetchClearanceStatus();
@@ -25,6 +26,29 @@ export default function StudentDashboard() {
     }
   };
 
+  const handleDownloadCertificate = async () => {
+    if (!clearance) return;
+    setDownloading(true);
+    try {
+      const res = await api.get(`/clearance/${clearance.clearance_id}/download-pdf`, {
+        responseType: 'blob',
+      });
+      // Create download link
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `UETM_Clearance_Certificate_${user?.registration_no || clearance.clearance_id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      alert('Certificate is only available once all 8 departments approve your clearance.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'approved':
@@ -39,6 +63,8 @@ export default function StudentDashboard() {
         return <span className="bg-slate-100 text-slate-800 text-xs px-2.5 py-1 rounded-full font-semibold capitalize">{status || 'Draft'}</span>;
     }
   };
+
+  const isCompleted = clearance?.status === 'completed';
 
   return (
     <div className="space-y-6">
@@ -65,18 +91,47 @@ export default function StudentDashboard() {
                 <span className="material-symbols-outlined text-xl">description</span>
                 <span>Initiate Clearance Application</span>
               </Link>
-            ) : (
-              <Link
-                to="/student/applications"
-                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/20 px-5 py-2.5 rounded-xl font-medium text-sm transition"
+            ) : isCompleted ? (
+              <button
+                onClick={handleDownloadCertificate}
+                disabled={downloading}
+                className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/30 transition cursor-pointer"
               >
-                <span className="material-symbols-outlined text-xl">visibility</span>
-                <span>View My Applications</span>
-              </Link>
+                <span className="material-symbols-outlined text-xl">download</span>
+                <span>{downloading ? 'Preparing Certificate...' : 'Download Official Certificate (PDF)'}</span>
+              </button>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-white/10 text-slate-200 border border-white/20 px-4 py-2 rounded-xl text-xs font-medium">
+                <span className="material-symbols-outlined text-amber-400 text-lg">pending</span>
+                <span>Clearance in progress across 8 departments</span>
+              </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Completion Banner if Approved */}
+      {isCompleted && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-2xl">verified</span>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-emerald-950">Degree Clearance Approved & Finalized</h3>
+              <p className="text-xs text-emerald-800">All 8 administrative departments have officially granted clearance. Your degree issuance file is ready.</p>
+            </div>
+          </div>
+          <button
+            onClick={handleDownloadCertificate}
+            disabled={downloading}
+            className="w-full sm:w-auto px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center gap-2 shrink-0 cursor-pointer"
+          >
+            <span className="material-symbols-outlined text-base">picture_as_pdf</span>
+            <span>Download Certificate PDF</span>
+          </button>
+        </div>
+      )}
 
       {/* Clearance Overview Card */}
       <div className="bg-white rounded-xl shadow-xs border border-slate-200 overflow-hidden">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AiAssistantWidget from './AiAssistantWidget';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
@@ -106,6 +107,9 @@ export default function Layout({ children }) {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
         {children}
       </main>
+
+      {/* Floating AI Assistant for all users */}
+      <AiAssistantWidget />
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-4 px-6 text-center text-xs text-slate-500">

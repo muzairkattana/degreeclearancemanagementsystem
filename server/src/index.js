@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import clearanceRoutes from './routes/clearance.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
+import aiRoutes from './routes/ai.routes.js';
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/clearance', clearanceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ai', aiRoutes);
 
 // 4. START SERVER
 app.listen(PORT, () => {

@@ -12,8 +12,8 @@ import AdminDashboard from './pages/AdminDashboard';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Layout>
           <Routes>
             {/* Public Route */}
@@ -42,7 +42,7 @@ export default function App() {
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </Layout>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
