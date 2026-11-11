@@ -62,20 +62,28 @@ export default function AiAssistantWidget() {
 
   return (
     <>
-      {/* Floating Chat Launcher Button */}
+      {/* Floating Chat Launcher Button - Completely Rounded with Header Dark Blue */}
       <div className="fixed bottom-6 right-6 z-50">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-2xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-200 border border-white/20 cursor-pointer font-medium text-sm group"
+            aria-label="Open AI Assistant"
+            className="w-14 h-14 rounded-full bg-[#00173b] hover:bg-[#0a2b5c] text-white shadow-2xl hover:shadow-[#00173b]/60 hover:scale-108 active:scale-95 transition-all duration-300 border-2 border-amber-400/40 flex items-center justify-center cursor-pointer group relative"
           >
-            <span className="material-symbols-outlined text-amber-300 text-2xl group-hover:rotate-12 transition-transform">
+            {/* Robot/Brain Icon */}
+            <span className="material-symbols-outlined text-amber-400 text-2xl group-hover:rotate-12 transition-transform duration-300">
               smart_toy
             </span>
-            <span>Ask AI Assistant</span>
-            <span className="flex h-2.5 w-2.5 relative">
+
+            {/* Glowing Active Status Pulse */}
+            <span className="absolute top-0 right-0 flex h-3.5 w-3.5 -mt-0.5 -mr-0.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-[#00173b]"></span>
+            </span>
+
+            {/* Hover Tooltip Label */}
+            <span className="absolute right-16 px-3 py-1.5 rounded-lg bg-[#00173b] text-white text-xs font-semibold whitespace-nowrap shadow-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              AI Clearance Assistant
             </span>
           </button>
         )}
@@ -84,10 +92,10 @@ export default function AiAssistantWidget() {
       {/* Chat Window Panel */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[92vw] h-[520px] bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
-          {/* Header */}
-          <div className="bg-[#00173b] p-4 text-white flex items-center justify-between border-b border-blue-900/50">
+          {/* Header matching site header navy #00173b */}
+          <div className="bg-[#00173b] p-4 text-white flex items-center justify-between border-b border-blue-900/50 shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-400">
+              <div className="w-9 h-9 rounded-full bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-400">
                 <span className="material-symbols-outlined text-xl">smart_toy</span>
               </div>
               <div>
@@ -102,7 +110,7 @@ export default function AiAssistantWidget() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-8 h-8 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
+              className="w-8 h-8 rounded-full hover:bg-white/10 text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
             >
               <span className="material-symbols-outlined text-lg">close</span>
             </button>
@@ -118,7 +126,7 @@ export default function AiAssistantWidget() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs sm:text-[13px] leading-relaxed shadow-xs ${
                     m.sender === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-xs'
+                      ? 'bg-[#00173b] text-white rounded-br-xs'
                       : 'bg-white text-slate-800 border border-slate-200 rounded-bl-xs'
                   }`}
                   style={{ whiteSpace: 'pre-line' }}
@@ -130,7 +138,7 @@ export default function AiAssistantWidget() {
             ))}
             {loading && (
               <div className="flex items-center gap-2 p-2 text-slate-500 text-xs bg-white rounded-xl w-fit border border-slate-200">
-                <div className="w-3.5 h-3.5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-3.5 h-3.5 border-2 border-[#00173b] border-t-transparent rounded-full animate-spin"></div>
                 <span>AI assistant is thinking...</span>
               </div>
             )}
@@ -143,7 +151,7 @@ export default function AiAssistantWidget() {
               onClick={() => {
                 setInput('How does the clearance process work?');
               }}
-              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-blue-500 text-slate-600 hover:text-blue-600 transition cursor-pointer"
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-[#00173b] text-slate-700 hover:text-[#00173b] transition cursor-pointer font-medium"
             >
               📋 Clearance steps
             </button>
@@ -151,7 +159,7 @@ export default function AiAssistantWidget() {
               onClick={() => {
                 setInput('What are library clearance rules?');
               }}
-              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-blue-500 text-slate-600 hover:text-blue-600 transition cursor-pointer"
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-[#00173b] text-slate-700 hover:text-[#00173b] transition cursor-pointer font-medium"
             >
               📚 Library dues
             </button>
@@ -159,7 +167,7 @@ export default function AiAssistantWidget() {
               onClick={() => {
                 setInput('How do I download my certificate?');
               }}
-              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-blue-500 text-slate-600 hover:text-blue-600 transition cursor-pointer"
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-white border border-slate-300 hover:border-[#00173b] text-slate-700 hover:text-[#00173b] transition cursor-pointer font-medium"
             >
               🎓 Certificate
             </button>
@@ -172,12 +180,12 @@ export default function AiAssistantWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything about clearance..."
-              className="flex-1 py-2 px-3 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 bg-slate-50"
+              className="flex-1 py-2 px-3 text-xs sm:text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00173b] focus:border-[#00173b] bg-slate-50"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-2 rounded-xl bg-[#00173b] hover:bg-blue-900 text-white disabled:opacity-40 transition cursor-pointer flex items-center justify-center shadow-xs"
+              className="p-2 rounded-xl bg-[#00173b] hover:bg-[#0a2b5c] text-white disabled:opacity-40 transition cursor-pointer flex items-center justify-center shadow-xs"
             >
               <span className="material-symbols-outlined text-[18px]">send</span>
             </button>
