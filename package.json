@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/MuhammadYasir85a/degree-clearance-management-system#readme",
   "dependencies": {
-    "concurrently": "^10.0.6"
+    "concurrently": "^10.0.6",
+    "firebase-admin": "^14.5.0"
   }
 }
