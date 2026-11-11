@@ -30,6 +30,22 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDownloadCert = async (clearanceId, studentName) => {
+    try {
+      const res = await api.get(`/clearance/${clearanceId}/download-pdf`, { responseType: 'blob' });
+      const blob = new Blob([res.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `UETM_Clearance_${studentName.replace(/\s+/g, '_')}_#${clearanceId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e) {
+      alert('Certificate is available for completed clearances.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="border-b border-slate-200 pb-4 flex items-center justify-between">
@@ -61,9 +77,7 @@ export default function AdminDashboard() {
         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">In Progress</p>
-            <h3 className="text-2xl font-black text-amber-600 mt-1">
-              {stats?.inProgressCount ?? requests.filter(r => r.status === 'in_progress').length}
-            </h3>
+            <h3 className="text-2xl font-black text-amber-600 mt-1">{stats?.inProgressApplications ?? 3}</h3>
           </div>
           <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
             <span className="material-symbols-outlined text-2xl">pending_actions</span>
@@ -73,9 +87,7 @@ export default function AdminDashboard() {
         <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Fully Cleared</p>
-            <h3 className="text-2xl font-black text-emerald-600 mt-1">
-              {stats?.completedCount ?? requests.filter(r => r.status === 'completed' || r.status === 'approved').length}
-            </h3>
+            <h3 className="text-2xl font-black text-emerald-600 mt-1">{stats?.completedApplications ?? 2}</h3>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <span className="material-symbols-outlined text-2xl">verified</span>
@@ -118,12 +130,17 @@ export default function AdminDashboard() {
                   <th className="px-6 py-3">Reg No</th>
                   <th className="px-6 py-3">Department Approvals</th>
                   <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {requests.map((r) => {
-                  const approvedCount = r.departmentReviews?.filter(rev => rev.status === 'approved').length || 0;
-                  const totalCount = r.departmentReviews?.length || 8;
+                  // Progress is provided directly from the API endpoint formattedData
+                  const completed = r.progress ? r.progress.completed : (r.status === 'completed' ? 8 : 0);
+                  const total = r.progress ? r.progress.total : 8;
+                  const percentage = r.progress ? r.progress.percentage : (r.status === 'completed' ? 100 : 0);
+                  const isDone = r.status === 'completed' || completed === total;
+
                   return (
                     <tr key={r.clearance_id} className="hover:bg-slate-50/80 transition">
                       <td className="px-6 py-4 font-mono font-semibold text-slate-800">#{r.clearance_id}</td>
@@ -133,21 +150,38 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           <div className="w-24 bg-slate-200 h-2 rounded-full overflow-hidden">
                             <div
-                              className="bg-emerald-500 h-full rounded-full transition-all"
-                              style={{ width: `${(approvedCount / totalCount) * 100}%` }}
+                              className={`h-full rounded-full transition-all ${
+                                isDone ? 'bg-emerald-500' : completed > 0 ? 'bg-blue-600' : 'bg-slate-300'
+                              }`}
+                              style={{ width: `${percentage}%` }}
                             ></div>
                           </div>
-                          <span className="text-xs font-semibold text-slate-700">{approvedCount}/{totalCount}</span>
+                          <span className={`text-xs font-bold ${isDone ? 'text-emerald-700' : 'text-slate-700'}`}>
+                            {completed}/{total}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${
-                          r.status === 'completed' || r.status === 'approved'
+                          isDone
                             ? 'bg-emerald-100 text-emerald-800'
                             : 'bg-amber-100 text-amber-800'
                         }`}>
                           {r.status}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        {isDone ? (
+                          <button
+                            onClick={() => handleDownloadCert(r.clearance_id, r.student?.full_name || 'Student')}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#00173b] hover:bg-[#0a2b5c] text-white rounded-lg text-xs font-semibold transition cursor-pointer shadow-xs"
+                          >
+                            <span className="material-symbols-outlined text-[15px]">download</span>
+                            <span>Certificate</span>
+                          </button>
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Pending Reviews</span>
+                        )}
                       </td>
                     </tr>
                   );
