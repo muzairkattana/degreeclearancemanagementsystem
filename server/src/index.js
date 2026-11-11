@@ -17,10 +17,19 @@ const PORT = process.env.PORT || 5000;
 
 // 1. MIDDLEWARES (Must run BEFORE routes)
 app.use(morgan('dev'));
+
+// Permissive CORS for local & production deployment
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow server-to-server, mobile, same-origin, or Vercel preview URLs
+    if (!origin || origin.includes('localhost') || origin.includes('.vercel.app') || origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -31,10 +40,6 @@ app.get('/', (req, res) => {
     <div style="font-family: sans-serif; text-align: center; padding: 50px;">
       <h2 style="color: #00173b;">🚀 Degree Clearance Management API Server is Running!</h2>
       <p style="color: #64748b;">This port (5000) is the backend API.</p>
-      <p style="margin-top: 20px;">
-        To view the interactive portal UI, open: 
-        <a href="http://localhost:5173" style="color: #2563eb; font-weight: bold; font-size: 18px;">http://localhost:5173</a>
-      </p>
     </div>
   `);
 });
